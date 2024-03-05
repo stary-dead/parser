@@ -7,17 +7,35 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
 def calculate_execution_time(start_time):
     end_time = time.time()
     return end_time - start_time
 
+def get_splited_urls(driver_count, urls):
+    num_drivers = [[] for _ in range(driver_count)]
+
+    for index, url in enumerate(urls):
+        num_driver_index = index % driver_count
+        num_drivers[num_driver_index].append(url)
+    return num_drivers
+
 def fetch_page_content(driver, url):
     driver.get(url)
     return driver.page_source
+
 async def fetch_page_content_async(driver, url):
     await driver.get(url)
     return driver.page_source
 
+async def close_modal_async(driver):
+    try:
+        modal_close_button = await WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CLASS_NAME, 'ant-modal-close'))
+        )
+        await modal_close_button.click()
+    except:
+        pass
 def close_modal(driver):
     try:
         modal_close_button = driver.find_element(By.CLASS_NAME, 'ant-modal-close')

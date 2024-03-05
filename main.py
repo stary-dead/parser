@@ -27,13 +27,5 @@ if __name__ == "__main__":
         # {'name': 'Категория 2', 'url': 'https://www.poizon.com/category/sneakers/skateboarding-500000370'},
         # Добавьте дополнительные категории по аналогии
     ]
-    products = [
-        ("https://www.poizon.com/product/jordan-11-retro-dmp-gratitude-2023-64839289", "https://google.com"),
-        ("https://www.poizon.com/product/converse-chuck-taylor-all-star-70-hi-black-52308433", "https://google.com"),
-        ("https://www.poizon.com/product/nike-air-monarch-iv-white-navy-52565620", "https://google.com"),
-        ("https://www.poizon.com/product/nike-air-force-1-low-07-white-52579883", "https://google.com"),
-        ("https://www.poizon.com/product/nike-dunk-low-retro-white-black-panda-52581981", "https://google.com"),
-        ("https://www.poizon.com/product/nike-air-force-1-low-flax-52577285", "https://google.com"),
-    ]
-    # asyncio.run(main(categories))
-    asyncio.run(start_parse_products(products))
+    asyncio.run(main(categories))
+    # asyncio.run(start_parse_products(products))
