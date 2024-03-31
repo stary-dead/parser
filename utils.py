@@ -8,6 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 def calculate_execution_time(start_time):
     end_time = time.time()
     return end_time - start_time
@@ -39,32 +40,25 @@ async def close_modal_async(driver):
 def close_modal(driver):
     try:
         modal_close_button = driver.find_element(By.CLASS_NAME, 'ant-modal-close')
-        modal_close_button.click()
-    except:
-        pass
+        if modal_close_button:
+            modal_close_button.click()
+    except Exception as e:
+        print("Нет всплывающего баннера")
+        
 def initialize_webdriver(base_url):
     service = Service(ChromeDriverManager().install())
     options = webdriver.ChromeOptions()
-    options.add_experimental_option("detach", True)
+    options.add_argument('--headless')  # Включаем режим headless
     driver = webdriver.Chrome(service=service, options=options)
     driver.get(base_url)
     return driver
-
-async def click_product_details_more(driver):
-    try:
-        product_details_more = driver.find_element(By.CLASS_NAME, 'ProductDetails_more__3bYAA')
-        product_details_more.click()
-        return True
-    except Exception as e:
-        print(f"Исключение: {str(e)}")
-        print(product_details_more)
-        return False
 
 def click_next_page(driver):
     next_button = None
     try:
         next_button = driver.find_element(By.XPATH, '//li[@class="ant-pagination-next"]/button')
     except NoSuchElementException:
+        print("Ошибка. Нет такой кнопки")
         return False
     
     if next_button and next_button.is_displayed():

@@ -6,6 +6,7 @@ from product import Product
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 import selenium_async
+from selenium_async import Pool
 from functools import partial
 
 def get_splited_urls(driver_count, urls):
@@ -22,12 +23,12 @@ def start_driver(driver: selenium_async.WebDriver, driver_urls):
 
 
 async def start_parse_products(all_products=[]):
-    num_drivers = 12 
+    num_drivers = 6 
     driver_urls = get_splited_urls(num_drivers, all_products)
     tasks = []
     for urls in driver_urls:
         partial_func = partial(start_driver, driver_urls=urls)
-        tasks.append(selenium_async.run_sync(partial_func))
+        tasks.append(selenium_async.run_sync(partial_func, pool=Pool(max_size=num_drivers, blank_page_after_use=True)))
 
     # Запускаем все задачи параллельно
     await asyncio.gather(*tasks)

@@ -4,11 +4,14 @@ import re
 from bs4 import BeautifulSoup
 from utils import *
 from product import Product
+from datetime import datetime
+
 async def parse_page(driver):
     html_content = driver.page_source
     soup = BeautifulSoup(html_content, 'html.parser')
-
     goods_list = soup.find('div', class_=re.compile(r'GoodsList_goodsList__\w+'))
+
+
     if goods_list:
         list_articles = goods_list.find_all('a', class_=re.compile(r'GoodsItem_goodsItem__\w+'))
         
@@ -34,14 +37,19 @@ async def parse_page(driver):
 
 async def parse_category(semaphore, category):
     async with semaphore:
+        
         base_url = category['url']
         driver = initialize_webdriver(base_url)
-
+        await asyncio.sleep(4)
         processed_pages = 0
         total_count_items = 0
         total_items = []
         while True:
+            await asyncio.sleep(5)
             count_items_on_page, items_on_page = await parse_page(driver)
+            print("__________________________________________")
+            print(count_items_on_page)
+            print("__________________________________________")
             total_count_items += count_items_on_page
             total_items.extend(items_on_page)
             processed_pages += 1
@@ -50,15 +58,16 @@ async def parse_category(semaphore, category):
                 close_modal(driver)
                 await asyncio.sleep(2)
                 if click_next_page(driver):
-                    await asyncio.sleep(2)
                     continue
                 else:
+                    print("Программа была прервана.")
                     break
             except Exception as e:
                 print("Ошибка parse_category:", e)
                 break
 
         driver.quit()
+
         return total_items #returns list of turples [(url, link-to-image), (url, link-to-image),(url, link-to-image),]
     
 #/___________________________________________________________\
