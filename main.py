@@ -24,8 +24,8 @@ async def main(categories):
     
 if __name__ == "__main__":
     categories = [
-        # {'name': 'Категория 1', 'url': 'https://www.poizon.com/category/sneakers/basketball-500000368'},
-        {'name': 'Категория 2', 'url': 'https://www.poizon.com/category/sneakers/skateboarding-500000370'},
+        {'name': 'Категория 1', 'url': 'https://www.poizon.com/category/sneakers/basketball-500000368'},
+        # {'name': 'Категория 2', 'url': 'https://www.poizon.com/category/sneakers/skateboarding-500000370'},
         # Добавьте дополнительные категории по аналогии
     ]
     asyncio.run(main(categories))
