@@ -6,11 +6,10 @@ import aiofiles
 
 url = "https://new.yoocart.ru/action/parse-poison/import-json.php?code=h2mseventyn"
 async def send_post_request(url, data):
-    print(data)
-    # async with aiohttp.ClientSession() as session:
-    #     async with session.post(url, json=data) as response:
-    #         print(f"Response status: {response.status}")
-    #         print(await response.text())
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, json=data) as response:
+            print(f"Response status: {response.status}")
+            print(await response.text())
 
 async def read_file_async(file_path):
     async with aiofiles.open(file_path, mode='r') as file:
@@ -22,9 +21,9 @@ async def process_files(files):
         file_content = await read_file_async(file_path)
         product_data = json.loads(file_content)
         products_to_send.append(product_data)
-        if len(products_to_send) == 50:
+        if len(products_to_send) == 100: # Cколько товаров отправляем
             await send_post_request(url, products_to_send)
-            await asyncio.sleep(60*10) 
+            await asyncio.sleep(60*10) # С какой периодичностью, секунды
             products_to_send = []
     if products_to_send:
         await send_post_request(url, products_to_send)

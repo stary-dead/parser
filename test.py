@@ -1,38 +1,99 @@
-import selenium_async
-from selenium_async import WebDriver
-import asyncio
-import time
-from functools import partial
-import request_sender
-print(1)
-# def get_title1(driver: selenium_async.WebDriver, data):
-#     driver.get(url = "https://www.python.org/")
-#     time.sleep(10)
-#     print(data)
-#     return driver.title
-# def get_title2(driver: selenium_async.WebDriver, data):
-#     driver.get(url = "https://www.youtube.com/")
-#     print(data)
-#     return driver.title
-# def get_title3(driver: selenium_async.WebDriver, data):
-#     driver.get(url = "https://www.google.com/")
-#     time.sleep(15)
-#     print(data)
+def convert_to_european_size(size_str):
+    us_women_to_eu = {
+        "5.5": "36",
+        "6": "36.5",
+        "6.5": "37.5",
+        "7": "38",
+        "7.5": "38.5",
+        "8": "39",
+        "8.5": "40",
+        "9": "40.5",
+        "9.5": "41",
+        "10": "42",
+        "10.5": "42.5",
+        "11": "43",
+        "11.5": "44",
+        "12": "44.5",
+        "12.5": "45",
+        "13": "45.5",
+        "13.5": "46",
+        "14": "47",
+        "14.5": "47.5",
+        "15": "48",
+        "15.5": "48.5",
+        "16": "49",
+        "16.5": "49.5"
+    }
+
+    us_men_to_eu = {
+        "4": "36",
+        "4.5": "36.5",
+        "5": "37.5",
+        "5.5": "38",
+        "6": "38.5",
+        "6.5": "39",
+        "7": "40",
+        "7.5": "40.5",
+        "8": "41",
+        "8.5": "42",
+        "9": "42.5",
+        "9.5": "43",
+        "10": "44",
+        "10.5": "44.5",
+        "11": "45",
+        "11.5": "45.5",
+        "12": "46",
+        "12.5": "46.5",
+        "13": "47",
+        "13.5": "47.5",
+        "14": "48",
+        "14.5": "48.5",
+        "15": "49",
+        "15.5": "49.5"
+    }
+
+    uk_to_eu = {
+        "3.5": "36",
+        "4": "36.5",
+        "4.5": "37.5",
+        "5": "38",
+        "5.5": "38.5",
+        "6": "39",
+        "6.5": "40",
+        "7": "40.5",
+        "7.5": "41",
+        "8": "42",
+        "8.5": "42.5",
+        "9": "43",
+        "9.5": "44",
+        "10": "44.5",
+        "10.5": "45",
+        "11": "45.5",
+        "11.5": "46",
+        "12": "46.5",
+        "12.5": "47",
+        "13": "47.5",
+        "14": "48",
+        "14.5": "48.5"
+    }
+
+    if size_str.startswith("US W"):
+        us_size = size_str.split()[2]
+        if us_size in us_women_to_eu:
+            return us_women_to_eu[us_size]
+    elif size_str.startswith("US M"):
+        us_size = size_str.split()[2]
+        if us_size in us_men_to_eu:
+            return us_men_to_eu[us_size]
+    elif size_str.startswith("UK"):
+        uk_size = size_str.split()[1]
+        if uk_size in uk_to_eu:
+            return uk_to_eu[uk_size]
     
-#     return driver.title
-# async def main():
-#      tasks = []
-#     #  options = Options(browser="firefox", headless=None)
-#     #  driver = await selenium_async.run_sync()
-#      partial_get_title1 = partial(get_title1, data="Ну")
-#      partial_get_title2 = partial(get_title2, data="Да")
-#      partial_get_title3 = partial(get_title3, data="Нахуй")
-#      tasks.append(selenium_async.run_sync(partial_get_title1))
-#      tasks.append(selenium_async.run_sync(partial_get_title2))
-#      tasks.append(selenium_async.run_sync(partial_get_title3))
-#      await asyncio.gather(*tasks)
+    return "Размер не найден"
 
-# if __name__ == "__main__":
-#     asyncio.run(main())
-
-# # prints: Welcome to Python.org
+# Пример использования:
+while True:
+    print("Введи размер")
+    size = input()
+    print(convert_to_european_size(size))

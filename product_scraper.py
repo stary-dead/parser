@@ -33,4 +33,4 @@ async def start_parse_products(all_products=[]):
     # Запускаем все задачи параллельно
     await asyncio.gather(*tasks)
 
-# asyncio.run(start_parse_products())
+# asyncio.run(start_parse_products([("https://www.poizon.com/product/jordan-11-retro-dmp-gratitude-2023-64839289?track_referer_page_id=2307&track_referer_block_type=4776&track_referer_position=1", "https://www.poizon.com/product/jordan-legacy-312-skateboarding-shoes-men-74012395")]))

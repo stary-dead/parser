@@ -1,9 +1,9 @@
 # utils.py
 import time
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.firefox.options import Options
+from webdriver_manager.firefox import GeckoDriverManager
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
@@ -46,10 +46,10 @@ def close_modal(driver):
         print("Нет всплывающего баннера")
         
 def initialize_webdriver(base_url):
-    service = Service(ChromeDriverManager().install())
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')  # Включаем режим headless
-    driver = webdriver.Chrome(service=service, options=options)
+    service = Service(GeckoDriverManager().install())
+    options = webdriver.FirefoxOptions()
+    # options.add_argument('--headless')  # Включаем режим headless
+    driver = webdriver.Firefox(service=service, options=options)
     driver.get(base_url)
     return driver
 

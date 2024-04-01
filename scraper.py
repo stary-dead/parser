@@ -92,7 +92,7 @@ def parse_product_content(driver, data):
         print("Блок с названием не найден")
         name = "None"
     
-    sku_panel = soup.find('div', class_=re.compile(r'SkuPanel_list__\w+'))
+    sku_panel = soup.findAll('div', class_=re.compile(r'SkuPanel_list__\w+'))[-1]
     if sku_panel:
         sku_items = sku_panel.find_all('div', class_=re.compile(r'SkuPanel_item__\w+'))
         product_info = []
