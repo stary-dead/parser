@@ -21,9 +21,9 @@ async def process_files(files):
         file_content = await read_file_async(file_path)
         product_data = json.loads(file_content)
         products_to_send.append(product_data)
-        if len(products_to_send) == 100: # Cколько товаров отправляем
+        if len(products_to_send) == 200: # Cколько товаров отправляем
             await send_post_request(url, products_to_send)
-            await asyncio.sleep(60*10) # С какой периодичностью, секунды
+            await asyncio.sleep(60*5) # С какой периодичностью, секунды
             products_to_send = []
     if products_to_send:
         await send_post_request(url, products_to_send)
@@ -38,4 +38,4 @@ async def main():
             files_to_process.append(file_path)
 
     await process_files(files_to_process)
-        
+    

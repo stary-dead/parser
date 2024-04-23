@@ -1,13 +1,18 @@
 import json
-from utils import convert_to_european_size
+from utils import format_size
 import time
 class Product:
-    def __init__(self, name, url, image_url, info, properties):
+    def __init__(self, name, url, image_url, info, properties, type):
         self.name = name
         self.url = url
         self.image_url = image_url
-        self.info, self.active = convert_to_european_size(info)
+        if info:
+            self.info, self.active = format_size(info)
+        else:
+            self.info = []
+            self.active = False
         self.properties = properties
+        self.type = type
     def __str__(self):
         return f"Product(url={self.url}, image_url={self.image_url})"
     def to_dict(self):
@@ -19,13 +24,20 @@ class Product:
             "properties": self.properties,
             "created": int(time.time()),
             "last_update": int(time.time()),
-            "active": self.active
+            "active": self.active,
+            "type":self.type
         }
 
     def to_json(self):
         return json.dumps(self.to_dict(), indent=4)
     
     def save(self):
+        print(self.type)
+        for item in self.info:
+            if "formatted_size" not in item or not item["formatted_size"]:
+                self.info, self.active = format_size(self.info)
+                break
+
         filename = self.url.split('/')[-1] + ".json"
         with open("results/"+filename, "w+") as file:
             file.write(self.to_json())

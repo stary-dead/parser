@@ -5,8 +5,8 @@ from bs4 import BeautifulSoup
 from utils import *
 from product import Product
 from datetime import datetime
-
-async def parse_page(driver):
+import time
+async def parse_page(driver, name_category):
     html_content = driver.page_source
     soup = BeautifulSoup(html_content, 'html.parser')
     goods_list = soup.find('div', class_=re.compile(r'GoodsList_goodsList__\w+'))
@@ -17,17 +17,9 @@ async def parse_page(driver):
         
         products = []
         for article in list_articles:
-            # Получаем ссылку на изображение
-            image_tag = article.find('img', class_=re.compile(r'PoizonImage_img__\w+'))
-            if image_tag:
-                image_url = image_tag['src']
-            else:
-                image_url = None
-
-            # Получаем ссылку на товар
-            product_url = article['href']  # Предполагается, что ссылка на товар находится в атрибуте href тега <a>
+            product_url = article['href']
             
-            product = ("https://www.poizon.com"+product_url, image_url)
+            product = ("https://www.poizon.com"+product_url, name_category)
             products.append(product)
         
         return len(list_articles), products
@@ -39,6 +31,7 @@ async def parse_category(semaphore, category):
     async with semaphore:
         
         base_url = category['url']
+        name_category = category['name']
         driver = initialize_webdriver(base_url)
         await asyncio.sleep(4)
         processed_pages = 0
@@ -46,9 +39,9 @@ async def parse_category(semaphore, category):
         total_items = []
         while True:
             await asyncio.sleep(5)
-            count_items_on_page, items_on_page = await parse_page(driver)
+            count_items_on_page, items_on_page = await parse_page(driver, name_category)
             print("__________________________________________")
-            print(count_items_on_page)
+            print(items_on_page)
             print("__________________________________________")
             total_count_items += count_items_on_page
             total_items.extend(items_on_page)
@@ -76,10 +69,11 @@ async def parse_category(semaphore, category):
 
 def parse_product_content(driver, data):
     url = data[0]        
-    link_to_image = data[1] # data - кортеж вида (url, link-to-image)
+    name_category = data[1] # data - кортеж вида (url, category_name)
     print(url)
 
     driver.get(url)
+    time.sleep(5)
     # await driver.get(url)
     html_content = driver.page_source  
     close_modal(driver)
@@ -91,8 +85,23 @@ def parse_product_content(driver, data):
     else:
         print("Блок с названием не найден")
         name = "None"
-    
-    sku_panel = soup.findAll('div', class_=re.compile(r'SkuPanel_list__\w+'))[-1]
+    pattern = r'(US|UK)\s*([MW]?)\s*(\d+(\.\d+)?)?\s*([YCY]?)?\s*'
+    sku_panel = None
+    found_size = False
+    for panel in soup.findAll('div', class_=re.compile(r'SkuPanel_list__\w+')):
+        sizes = panel.findAll('div', class_=re.compile(r'SkuPanel_value__\w+'))
+        if(sizes):
+            for item in sizes:
+                size = item.text.strip()
+                if re.fullmatch(pattern, size):
+                    sku_panel = panel
+                    found_size = True
+                    break
+                else:
+                    continue
+        if found_size:
+            break
+
     if sku_panel:
         sku_items = sku_panel.find_all('div', class_=re.compile(r'SkuPanel_item__\w+'))
         product_info = []
@@ -118,7 +127,17 @@ def parse_product_content(driver, data):
         print("Блок с дополнительными свойствами товара не найден")
         product_properties = None
 
-    product = Product(name, url, link_to_image, product_info, product_properties)
+    image_wrapper = soup.find('div', class_=re.compile(r'ProductSkuImgs_selectImg__\w+'))
+    if image_wrapper:
+        images = image_wrapper.findAll('img', class_=re.compile(r'ProductSkuImgs_img__\w+'))
+        links_to_image = []
+        for image in images:
+            links_to_image.append(image['src'])
+    else:
+        print("Блок с картинками не найден")
+
+    product = Product(name, url, links_to_image, product_info, product_properties, name_category)
     product.save()
-    return name, url, link_to_image, product_info, product_properties
+    print("____________________________________________________")
+    return name, url, links_to_image, product_info, product_properties, name_category
 

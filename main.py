@@ -24,9 +24,20 @@ async def main(categories):
     
 if __name__ == "__main__":
     categories = [
-        {'name': 'Категория 1', 'url': 'https://www.poizon.com/category/sneakers/basketball-500000368'},
-        # {'name': 'Категория 2', 'url': 'https://www.poizon.com/category/sneakers/skateboarding-500000370'},
-        # Добавьте дополнительные категории по аналогии
-    ]
+    {'name': 'Basketball', 'url': 'https://www.poizon.com/category/sneakers/basketball-500000368'},
+    # {'name': 'Skateboarding', 'url': 'https://www.poizon.com/category/sneakers/skateboarding-500000370'},
+    # {'name': 'Lifestyle', 'url': 'https://www.poizon.com/category/sneakers/lifestyle-500000372'},
+    # {'name': 'Running', 'url': 'https://www.poizon.com/category/sneakers/running-500000374'},
+    # {'name': 'Training', 'url': 'https://www.poizon.com/category/sneakers/training-500000376'},
+    # {'name': 'Cleats', 'url': 'https://www.poizon.com/category/sneakers/cleats-500000378'},
+    # {'name': 'Outdoors', 'url': 'https://www.poizon.com/category/sneakers/outdoors-500000380'},
+    # {'name': 'Boots', 'url': 'https://www.poizon.com/category/shoes/boots-500000382'},
+    # {'name': 'Flats', 'url': 'https://www.poizon.com/category/shoes/flats-500000389'},
+    # {'name': 'Casual Shoes', 'url': 'https://www.poizon.com/category/shoes/casual-shoes-500000391'},
+    # {'name': 'Pumps', 'url': 'https://www.poizon.com/category/shoes/pumps-500000393'},
+    # {'name': 'Sandals & Flip Flops', 'url': 'https://www.poizon.com/category/shoes/sandals-flip-flops-500000395'},
+    # {'name': 'Dress Shoes', 'url': 'https://www.poizon.com/category/shoes/dress-shoes-500000398'},
+]
+
     asyncio.run(main(categories))
     # asyncio.run(start_parse_products(products))

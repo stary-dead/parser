@@ -23,7 +23,7 @@ def start_driver(driver: selenium_async.WebDriver, driver_urls):
 
 
 async def start_parse_products(all_products=[]):
-    num_drivers = 1
+    num_drivers = 2
     driver_urls = get_splited_urls(num_drivers, all_products)
     tasks = []
     for urls in driver_urls:
@@ -33,4 +33,4 @@ async def start_parse_products(all_products=[]):
     # Запускаем все задачи параллельно
     await asyncio.gather(*tasks)
 
-asyncio.run(start_parse_products([("https://www.poizon.com/product/nike-flight-legacy-red-white-52574252", "https://www.poizon.com/product/jordan-legacy-312-skateboarding-shoes-men-74012395")]))
+# asyncio.run(start_parse_products([("https://www.poizon.com/product/nike-flight-legacy-red-white-52574252", "Тестовая")]))
