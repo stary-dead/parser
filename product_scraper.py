@@ -1,10 +1,5 @@
 import asyncio
 from scraper import parse_product_content
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from product import Product
-from selenium.webdriver.chrome.options import Options
-from selenium import webdriver
 import selenium_async
 from selenium_async import Pool
 from functools import partial
@@ -21,9 +16,7 @@ def start_driver(driver: selenium_async.WebDriver, driver_urls):
     for product in driver_urls:
         parse_product_content(driver, product)
 
-
-async def start_parse_products(all_products=[]):
-    num_drivers = 2
+async def start_parse_products(all_products=[], num_drivers = 2):
     driver_urls = get_splited_urls(num_drivers, all_products)
     tasks = []
     for urls in driver_urls:
@@ -33,4 +26,4 @@ async def start_parse_products(all_products=[]):
     # Запускаем все задачи параллельно
     await asyncio.gather(*tasks)
 
-# asyncio.run(start_parse_products([("https://www.poizon.com/product/nike-flight-legacy-red-white-52574252", "Тестовая")]))
+# asyncio.run(start_parse_products([("https://www.poizon.com/product/jordan-courtside-23-white-dark-concord-gs-52421111", "Тестовая")]))

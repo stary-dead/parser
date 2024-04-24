@@ -4,7 +4,6 @@ import re
 from bs4 import BeautifulSoup
 from utils import *
 from product import Product
-from datetime import datetime
 import time
 async def parse_page(driver, name_category):
     html_content = driver.page_source
@@ -41,7 +40,7 @@ async def parse_category(semaphore, category):
             await asyncio.sleep(5)
             count_items_on_page, items_on_page = await parse_page(driver, name_category)
             print("__________________________________________")
-            print(items_on_page)
+            print(count_items_on_page)
             print("__________________________________________")
             total_count_items += count_items_on_page
             total_items.extend(items_on_page)
@@ -53,7 +52,7 @@ async def parse_category(semaphore, category):
                 if click_next_page(driver):
                     continue
                 else:
-                    print("Программа была прервана.")
+                    print("Больше страниц нет. Инициализация парсинга отдельных товаров")
                     break
             except Exception as e:
                 print("Ошибка parse_category:", e)
@@ -66,14 +65,13 @@ async def parse_category(semaphore, category):
 #/___________________________________________________________\
 # Далее код парсера отдельных товаров
 #/___________________________________________________________\ 
-
 def parse_product_content(driver, data):
     url = data[0]        
     name_category = data[1] # data - кортеж вида (url, category_name)
     print(url)
-
+    
     driver.get(url)
-    time.sleep(5)
+    time.sleep(4)
     # await driver.get(url)
     html_content = driver.page_source  
     close_modal(driver)
@@ -85,9 +83,13 @@ def parse_product_content(driver, data):
     else:
         print("Блок с названием не найден")
         name = "None"
-    pattern = r'(US|UK)\s*([MW]?)\s*(\d+(\.\d+)?)?\s*([YCY]?)?\s*'
+    pattern = r'(US|UK)\s*(Kids)?\s*([MW]?)\s*(\d+(\.\d+)?)?\s*([YCY]?)?\s*'
     sku_panel = None
     found_size = False
+
+    html_content = driver.page_source  
+    soup = BeautifulSoup(html_content, 'html.parser')
+    time.sleep(2)
     for panel in soup.findAll('div', class_=re.compile(r'SkuPanel_list__\w+')):
         sizes = panel.findAll('div', class_=re.compile(r'SkuPanel_value__\w+'))
         if(sizes):
@@ -101,7 +103,7 @@ def parse_product_content(driver, data):
                     continue
         if found_size:
             break
-
+    
     if sku_panel:
         sku_items = sku_panel.find_all('div', class_=re.compile(r'SkuPanel_item__\w+'))
         product_info = []
@@ -136,7 +138,33 @@ def parse_product_content(driver, data):
     else:
         print("Блок с картинками не найден")
 
-    product = Product(name, url, links_to_image, product_info, product_properties, name_category)
+    click_size_guide(driver)
+    time.sleep(2)
+    html_content = driver.page_source
+    soup = BeautifulSoup(html_content, 'html.parser')
+    columns = soup.findAll('div', class_=re.compile(r'size-guide_column__\w+'))
+    table = []
+    if columns:
+        num_rows = len(columns[0].findAll('div', class_=re.compile(r'size-guide_tableCell__\w+')))
+        num_columns = len(columns)
+        headers = soup.findAll('div', class_=re.compile(r'size-guide_tableHeader__\w+'))
+        
+        # Создаем пустой двумерный массив
+        table = [['' for _ in range(num_columns)] for _ in range(num_rows + 1)]
+
+        # Заполняем первую строку заголовками
+        for i, header in enumerate(headers):
+            table[0][i] = header.text.strip()
+
+        # Заполняем остальные строки данными из каждой ячейки
+        for i, column in enumerate(columns):
+            cells = column.findAll('div', class_=re.compile(r'size-guide_tableCell__\w+'))
+            for j, cell in enumerate(cells):
+                table[j + 1][i] = cell.text.strip()  # Добавляем 1 к j, чтобы пропустить первую строку
+
+    else:
+        print('Не нашелся')
+    product = Product(name, url, links_to_image, product_info, product_properties, name_category, table)
     product.save()
     print("____________________________________________________")
     return name, url, links_to_image, product_info, product_properties, name_category

@@ -1,44 +1,134 @@
-import re
+def find_eu_value(table, target_size):
+    eu_index = table[0].index("EU")   
+    for row in table[1:]:
+        if row[0] == target_size:
+            return row[eu_index]  
+    return None
 
-def parse_size_string(size_string):
-    # Регулярные выражения для каждой части строки
-    format_pattern = r'(?P<format>US|UK)'
-    gender_pattern = r'(?P<gender>[MW]?)'  # Пол (M - мужской, W - женский)
-    category_pattern = r'(Kids)?'  # Категория (для детей)
-    size_pattern = r'(?P<size>\d+(\.\d+)?)'  # Размер
-    age_pattern = r'(?P<age>[YCY]?)'  # Возраст (Y - год, C - ребенок)
+array = [
+[
+            "US",
+            "EU",
+            "UK",
+            "CHN"
+        ],
+        [
+            "4",
+            "35.5",
+            "/",
+            "215"
+        ],
+        [
+            "4.5",
+            "36",
+            "3.5",
+            "220"
+        ],
+        [
+            "5",
+            "37",
+            "4",
+            "225"
+        ],
+        [
+            "5.5",
+            "37.5",
+            "4.5",
+            "230"
+        ],
+        [
+            "6",
+            "38",
+            "5",
+            "235"
+        ],
+        [
+            "6.5",
+            "39",
+            "5.5",
+            "240"
+        ],
+        [
+            "7",
+            "39.5",
+            "6",
+            "245"
+        ],
+        [
+            "7.5",
+            "40",
+            "6.5",
+            "250"
+        ],
+        [
+            "8",
+            "41",
+            "7",
+            "255"
+        ],
+        [
+            "8.5",
+            "41.5",
+            "7.5",
+            "260"
+        ],
+        [
+            "9",
+            "42",
+            "8",
+            "265"
+        ],
+        [
+            "9.5",
+            "43",
+            "8.5",
+            "270"
+        ],
+        [
+            "10",
+            "43.5",
+            "9",
+            "275"
+        ],
+        [
+            "10.5",
+            "44",
+            "9.5",
+            "280"
+        ],
+        [
+            "11",
+            "45",
+            "10",
+            "285"
+        ],
+        [
+            "11.5",
+            "45.5",
+            "10.5",
+            "290"
+        ],
+        [
+            "12",
+            "46",
+            "11",
+            "295"
+        ],
+        [
+            "12.5",
+            "47",
+            "11.5",
+            "300"
+        ],
+        [
+            "13",
+            "47.5",
+            "12",
+            "305"
+        ],
+]
 
-    # Объединяем регулярные выражения
-    pattern = fr'{format_pattern}\s*{gender_pattern}\s*{category_pattern}\s*{size_pattern}\s*{age_pattern}'
+target_size = "11.5"
 
-    # Инициализируем список для хранения словарей
-    parsed_data = []
-
-    # Находим все соответствия регулярному выражению в строке
-    matches = re.finditer(pattern, size_string)
-
-    # Проходимся по каждому соответствию и создаем словарь для каждого
-    for match in matches:
-        data_dict = match.groupdict()
-
-        # Если пол не указан, присваиваем "Unisex"
-        if not data_dict['gender']:
-            data_dict['gender'] = 'Unisex'
-
-        # Преобразуем размер в числовой тип, если он указан
-        if data_dict['size']:
-            data_dict['size'] = float(data_dict['size'])
-        
-        # Если возраст не указан, присваиваем None
-        if not data_dict['age']:
-            data_dict['age'] = None
-
-        # Добавляем словарь в список
-        parsed_data.append(data_dict)
-
-    return parsed_data
-
-
-while True:
-    print("Строка:")
-    print(parse_size_string(input()))
+result = find_eu_value(array, target_size)
+print("Значение из столбца EU:", result)
