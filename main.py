@@ -1,20 +1,26 @@
 import asyncio
 import time
-from scraper import parse_category
+from init_product_scraper import init_product_scraper_async
 from utils import calculate_execution_time
-from product_scraper import start_parse_products
 import request_sender
+from category_scrapper import CategoryScrapper
+
+async def init_scrap_category(semaphore, category):        
+    category_scraper = CategoryScrapper(category)
+    async with semaphore:
+        return await category_scraper.explore_category_pages_async() #returns list of turples [(url, link-to-image), (url, link-to-image),(url, link-to-image),]
+    
 async def main(categories):
     start_time = time.time()  # сохраняем время начала выполнения скрипта
     semaphore = asyncio.Semaphore(2)  # Ограничение на две одновременно выполняемые задачи
 
-    tasks = [parse_category(semaphore, category) for category in categories]
+    tasks = [init_scrap_category(semaphore, category) for category in categories]
     results = await asyncio.gather(*tasks)
 
     # Объединяем списки продуктов из всех категорий в один список
     all_products = [product for products in results for product in products]
-    await start_parse_products(all_products)
-    await request_sender.main()
+    await init_product_scraper_async(all_products, 2)
+    # await request_sender.main()
     
     total_time = calculate_execution_time(start_time)
     print(f"Общее время выполнения: {total_time} секунд")
@@ -40,4 +46,3 @@ if __name__ == "__main__":
 ]
 
     asyncio.run(main(categories))
-    # asyncio.run(start_parse_products(products))
