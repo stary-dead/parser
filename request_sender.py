@@ -28,8 +28,8 @@ async def process_files(files):
     if products_to_send:
         await send_post_request(url, products_to_send)
 
-async def main():
-    result_folder = 'results'
+async def main(category_name):
+    result_folder = 'results/'+category_name
 
     files_to_process = []
     for filename in os.listdir(result_folder):

@@ -9,6 +9,7 @@ class ProductScraper:
     def init_scrap_products(self):
         for product in self.urls:
             self.parse_product_content(product)
+
     def open_page(self, url):        
         print(url)
         self.driver.get(url)
@@ -23,7 +24,7 @@ class ProductScraper:
         return soup
     
     def scrap_title(self, soup):
-        main_info = soup.find('div', class_=re.compile(r'MainInfo_title__\w+'))
+        main_info = soup.find('h1', class_=re.compile(r'MainInfo_title__\w+'))
         if main_info:
             name = main_info.text.strip()
         else:
@@ -130,9 +131,9 @@ class ProductScraper:
         soup = self.get_soup()
         name = self.scrap_title(soup)
 
-        html_content = self.driver.page_source  
-        soup = BeautifulSoup(html_content, 'html.parser')
+        
         time.sleep(2)
+        soup = self.get_soup()
         
         product_info = self.scrap_sizes_info(soup)
         product_properties = self.scrap_product_properties(soup)
@@ -141,6 +142,7 @@ class ProductScraper:
         product_size_guide = self.scrap_product_size_guide()
 
         product = Product(name, url, product_images, product_info, product_properties, name_category, product_size_guide)
-        product.save()
+        if not product.save():
+            print(f"Продукт {product.name} не был записан из-за отсутсвия поля")
         print("____________________________________________________")
         return name, url, product_images, product_info, product_properties, name_category, product_size_guide

@@ -34,11 +34,15 @@ class Product:
         return json.dumps(self.to_dict(), indent=4)
     
     def save(self):
+        if not self.active or self.info == [] or self.name is None:
+            return False
         for item in self.info:
             if "formatted_size" not in item or not item["formatted_size"]:
                 self.info, self.active = format_size(self.info, self.table)
                 break
 
         filename = self.url.split('/')[-1] + ".json"
-        with open("results/"+filename, "w+") as file:
+        with open("results/"+self.type+"/"+filename, "w+") as file:
             file.write(self.to_json())
+        
+        return True

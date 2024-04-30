@@ -9,6 +9,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import os
 
 import re
 default_table = [    ["US Men", "US Women", "EU", "UK"],
@@ -186,3 +187,14 @@ def get_splited_urls(driver_count, urls):
         num_driver_index = index % driver_count
         num_drivers[num_driver_index].append(url)
     return num_drivers
+
+def make_dirs(categories = []):
+    results_path = "results"
+    if not os.path.exists(results_path):
+        os.makedirs(results_path)
+
+# Создаем папки внутри results
+    for folder in categories:
+        folder_path = os.path.join(results_path, folder)
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
