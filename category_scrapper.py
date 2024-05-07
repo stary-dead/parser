@@ -46,7 +46,7 @@ class CategoryScrapper:
                 total_count_items += count_items_on_page
                 total_items.extend(items_on_page)
                 processed_pages += 1
-                
+                page = 1
                 try:
                     utils.close_modal(self.driver)
                     await asyncio.sleep(2)

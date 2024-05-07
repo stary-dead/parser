@@ -1,6 +1,7 @@
 import re, utils, time
 from bs4 import BeautifulSoup
 from product import Product
+from selenium.common.exceptions import TimeoutException
 class ProductScraper:
     def __init__(self, urls_to_scrap, driver):
         self.urls = urls_to_scrap
@@ -126,7 +127,10 @@ class ProductScraper:
     def parse_product_content(self, data):
         url = data[0]
         name_category = data[1] # data - кортеж вида (url, category_name)
-        self.open_page(url)       
+        try:
+            self.open_page(url)  
+        except TimeoutException as e:
+            print(f"Парсинг страницы {url} не завершен. Страница не прогрузилась")     
         utils.close_modal(self.driver)
         soup = self.get_soup()
         name = self.scrap_title(soup)

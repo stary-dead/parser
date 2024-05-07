@@ -7,7 +7,8 @@ from product_scraper import ProductScraper
 def start_driver(driver: selenium_async.WebDriver, driver_urls):
     product_scraper = ProductScraper(urls_to_scrap=driver_urls, driver=driver)
     product_scraper.init_scrap_products()
-    driver.close()
+    return driver
+
 
 async def init_product_scraper_async(all_products=[], num_drivers = 1):
     driver_urls = get_splited_urls(num_drivers, all_products)
@@ -16,7 +17,11 @@ async def init_product_scraper_async(all_products=[], num_drivers = 1):
         partial_func = partial(start_driver, driver_urls=urls)
         tasks.append(selenium_async.run_sync(partial_func, pool=Pool(max_size=num_drivers, blank_page_after_use=True)))
 
-    await asyncio.gather(*tasks)
+    drivers = await asyncio.gather(*tasks)
+    for driver in drivers:
+        driver.quit()
+
+
 
 if __name__ == "__main__":
-    asyncio.run(init_product_scraper_async([("https://www.poizon.com/product/unisex-mlb-skate-shoes-64482550", "Basketball")]))
+    asyncio.run(init_product_scraper_async([("https://www.poizon.com/product/new-balance-nb-530-white-silver-navy-52650038", "Basketball"),]))

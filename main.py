@@ -22,14 +22,14 @@ async def main(categories):
         # results = await asyncio.gather(*tasks)
         results = await init_scrap_category(semaphore, category)
         # Объединяем списки продуктов из всех категорий в один список
-        all_products = [product for products in results for product in products]
-        await init_product_scraper_async(all_products, 4)
+        # all_products = [product for products in results for product in products]
+        await init_product_scraper_async(results, 4)
         await request_sender.main(category['name'])
         
         total_time = calculate_execution_time(start_time)
         print(f"Общее время выполнения: {total_time} секунд")
         print(f"Количество обработанных категорий: {len(categories)}")
-        print(f"Общее количество продуктов по всем категориям: {len(all_products)}")
+        print(f"Общее количество продуктов по всем категориям: {len(results)}")
 
     
 if __name__ == "__main__":

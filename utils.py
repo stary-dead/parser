@@ -100,7 +100,11 @@ def format_size(info, table):
 
 def find_eu_value(table, target_size):
     formatted_target_size = remove_decimal_zero(str(target_size))
-    eu_index = table[0].index("EU")   
+    if "EU" in table[0]:
+        eu_index = table[0].index("EU")
+    else:
+        table = default_table   
+        eu_index = table[0].index("EU")
     for row in table[1:]:
         if row[0] == "/":
             continue

@@ -1,6 +1,7 @@
 import json
 from utils import format_size
 import time
+
 class Product:
     def __init__(self, name, url, image_url, info, properties, type, table):
         self.name = name
@@ -14,11 +15,14 @@ class Product:
         self.properties = properties
         self.type = type
         self.table = table
+
     def __str__(self):
         return f"Product(url={self.url}, image_url={self.image_url})"
+
     def to_dict(self):
+
         return {
-            "name":self.name,
+            "name": self.name,
             "url": self.url,
             "image_url": self.image_url,
             "info": self.info,
@@ -26,8 +30,8 @@ class Product:
             "created": int(time.time()),
             "last_update": int(time.time()),
             "active": self.active,
-            "type":self.type,
-            "table":self.table
+            "type": self.type,
+            "table": json.dumps(self.table)
         }
 
     def to_json(self):
