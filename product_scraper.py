@@ -60,7 +60,9 @@ class ProductScraper:
 
                 size = sku_item.find('div', class_=re.compile(r'SkuPanel_value__\w+')).text.strip() if sku_item.find('div', class_=re.compile(r'SkuPanel_value__\w+')) else "None"
                 price = sku_item.find('div', class_=re.compile(r'SkuPanel_price__\w+')).text.strip() if sku_item.find('div', class_=re.compile(r'SkuPanel_price__\w+')) else "None"
-
+                if price == 'None':
+                    price = ""
+                price = price.replace('.', '').replace(',', '')
                 product_info.append({'size': size, 'price': price})
         else:
             print("Блок с информацией о размерах и ценах товара не найден")
@@ -149,4 +151,5 @@ class ProductScraper:
         if not product.save():
             print(f"Продукт {product.name} не был записан из-за отсутсвия поля")
         print("____________________________________________________")
+        time.sleep(2)
         return name, url, product_images, product_info, product_properties, name_category, product_size_guide

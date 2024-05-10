@@ -50,7 +50,7 @@ class CategoryScrapper:
                 try:
                     utils.close_modal(self.driver)
                     await asyncio.sleep(2)
-                    if utils.click_next_page(self.driver):
+                    if False:
                         continue
                     else:
                         print("Больше страниц нет. Инициализация парсинга отдельных товаров")

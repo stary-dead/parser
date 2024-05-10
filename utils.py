@@ -76,11 +76,33 @@ def parse_size_string(size_string, table):
         if not data_dict['age']:
             data_dict['age'] = None
 
-        data_dict['eu_size'] = find_eu_value(table, data_dict['size'])
-        
+        data_dict['eu_size_mask'] = find_eu_value(table, data_dict['size'])
+        if data_dict['eu_size_mask'] is None:
+            return None
+        data_dict['eu_size'] = process_eu_size(data_dict['eu_size_mask'])
         parsed_data.append(data_dict)
 
     return parsed_data
+
+def process_eu_size(size_value):
+    pattern1 = r'^\d{2}(\.\d{1})*([-\/])\d{2}(\.\d)*$'
+    pattern2 = r'^\d{2}(\s\d\/\d)?$'
+    if re.match(pattern1, size_value):
+        return (get_first_eu_value(size_value))
+    elif re.match(pattern2, size_value):
+        return (replace_fractions(size_value))
+    else:
+        return (size_value.replace('½', '.5'))
+
+def get_first_eu_value(input_string):
+    parts = input_string.split('-') if '-' in input_string else input_string.split('/')
+    return parts[0]
+
+def replace_fractions(input_string):
+    input_string = input_string.replace(' 1/2', '.5')
+    input_string = input_string.replace('1/3', '⅓')
+    input_string = input_string.replace('2/3', '⅔')
+    return input_string
 
 def format_size(info, table):
     has_price = False
@@ -88,12 +110,26 @@ def format_size(info, table):
         table = default_table
     for item in info:
         size = item["size"]
-        item["formatted_size"] = parse_size_string(size, table)
+        pattern = r'^\w{2}\s?\/$'
+        if re.match(pattern, size) or item['size'] == "":
+            info.remove(item) 
+            continue
+        formatted_size = parse_size_string(size, table)
+        if formatted_size is None:
+            info.remove(item) 
+            continue  
         price = item["price"]
+
+        if "kids" in size.lower():
+            if formatted_size != []:
+                formatted_size[0]['age'] = "Kids"
+        item["formatted_size"] = formatted_size
         if (price != "$--") and (price != None) and (price != ""):
             has_price = True
         else:
             item["price"] = ""
+        
+        item["price"] = item["price"].replace(',',"").replace('.','')
         
 
     return info, has_price
@@ -110,9 +146,23 @@ def find_eu_value(table, target_size):
             continue
         
         if formatted_target_size in row[0]:
-            return row[eu_index]  
-    return None
+            if row[eu_index] not in ['', ' ', '-', '/']:
+                return row[eu_index]  
 
+    return get_value_from_default_table(target_size)
+
+def get_value_from_default_table(target_size):
+    formatted_target_size = remove_decimal_zero(str(target_size))
+    table = default_table   
+    eu_index = table[0].index("EU")
+    for row in table[1:]:
+        if row[0] == "/":
+            continue
+        
+        if formatted_target_size in row[0]:
+            return row[eu_index]  
+        
+    return None
 def remove_decimal_zero(string):
     if string.endswith(".0"):
         return string[:-2]

@@ -24,7 +24,7 @@ async def send_post_request(url, data):
                         break
                     else:
                         print(f"Response status: {response.status}\nRetrying in 5 minutes...")
-                        await asyncio.sleep(300)
+                        await asyncio.sleep(60)
         except asyncio.TimeoutError as e:
             print(f"Timeout error\nRetrying in 5 minutes...")
             await asyncio.sleep(300)
@@ -39,9 +39,9 @@ async def process_files(files):
         file_content = await read_file_async(file_path)
         product_data = json.loads(file_content)
         products_to_send.append(product_data)
-        if len(products_to_send) == 70: # Cколько товаров отправляем
+        if len(products_to_send) == 120: # Cколько товаров отправляем
             await send_post_request(url, products_to_send)
-            await asyncio.sleep(60*5) # С какой периодичностью, секунды
+            await asyncio.sleep(60*2) # С какой периодичностью, секунды
             products_to_send = []
     if products_to_send:
         await send_post_request(url, products_to_send)

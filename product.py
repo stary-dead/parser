@@ -9,6 +9,7 @@ class Product:
         self.image_url = image_url
         if info:
             self.info, self.active = format_size(info, table)
+
         else:
             self.info = []
             self.active = False

@@ -24,4 +24,4 @@ async def init_product_scraper_async(all_products=[], num_drivers = 1):
 
 
 if __name__ == "__main__":
-    asyncio.run(init_product_scraper_async([("https://www.poizon.com/product/new-balance-nb-530-white-silver-navy-52650038", "Basketball"),]))
+    asyncio.run(init_product_scraper_async([("https://www.poizon.com/product/nike-mercurial-superfly-7-pinkred-black-gray-52581488", "Basketball"),]))
